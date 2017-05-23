@@ -1,0 +1,40 @@
+#  Author : Indresh Kumar Gupta
+#  Purpose : To compile all the cpp files
+#  Version : 1.2
+
+objDir := obj
+incDir := include
+srcDir := src
+binDir := bin
+files := $(basename $(notdir $(wildcard src/*)))
+all:
+	@make --no-print-directory object
+	@make --no-print-directory executable
+
+executable: $(files:%=$(binDir)/%)
+
+object: $(files:%=$(objDir)/%.o)
+
+$(objDir)/%.o : $(srcDir)/%.cpp | $(objDir)
+	@echo -n "Generating $(notdir $@)... "
+	@g++ -c -o $@ $< -Wno-deprecated
+	@echo "Done"
+
+$(binDir)/% : $(objDir)/%.o  | $(binDir)
+	@echo -n "Generating $(notdir $@)... "
+	@g++ -o $@ $< -Wno-deprecated
+	@echo "Done"
+
+$(objDir):
+	@mkdir $(objDir)
+
+$(binDir):
+	@mkdir $(binDir)
+
+clean:
+	@echo -n "Deleting files... "
+	@rm -f $(binDir)/*
+	@rm -f $(objDir)/*
+	@rmdir $(binDir)
+	@rmdir $(objDir)
+	@echo "Done"
